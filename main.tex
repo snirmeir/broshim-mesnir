@@ -1,0 +1,109 @@
+% !TEX program = xelatex
+\documentclass[12pt]{article}
+
+\usepackage{polyglossia}
+\setdefaultlanguage{hebrew}
+
+% David הוא הפונט הקלאסי לספרי קודש שקיים בכל ווינדוס.
+\setmainfont{David}[Script=Hebrew]
+% הגדרת גופן מיוחד לפירוש רש"י (כתב רש"י שנמצא ברוב מחשבי ווינדוס)
+\newfontfamily\rashifont{Guttman Rashi}[Script=Hebrew]
+
+% הגדרת גודל ספר קלאסי (16.5 על 23.5 ס"מ)
+\usepackage[paperwidth=16.5cm, paperheight=23.5cm, margin=1.8cm, top=2.5cm, bottom=2.2cm, headsep=0.5cm, headheight=14pt]{geometry}
+\usepackage{setspace}
+\setstretch{1.3} 
+\usepackage{microtype} % משפר את יישור הטקסט
+\usepackage{fancyhdr} % כותרות רצות
+
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{14.5pt} % פתרון סופי לאזהרת fancyhdr
+\addtolength{\topmargin}{-1.5pt} % פיצוי על הגדלת הגובה כדי שהטקסט לא ירד למטה
+\fancyhead[CO,CE]{\small \leftmark}
+\fancyfoot[CO,CE]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\newcommand{\addparasha}[1]{\markboth{#1}{#1}}
+
+% מאפשר לטקסט להיות מיושר ויפה (מתיחת רווחים למניעת חריגות ורווחים לא הגיוניים)
+\tolerance=1000
+\emergencystretch=3em
+
+\usepackage{bigfoot}
+\DeclareNewFootnote[para]{A} 
+\DeclareNewFootnote[para]{B}
+\DeclareNewFootnote[para]{C}[arabic] % זרם חדש למראי מקומות והפניות
+
+\renewcommand{\thefootnoteA}{}
+\renewcommand{\thefootnoteB}{}
+% הזרם ה-3 יהיה באותיות עבריות (א, ב, ג...)
+\renewcommand{\thefootnoteC}{\alph{footnoteC}} 
+\makeatletter
+% במערכת עברית alph הופך אוטומטית לאותיות אבג
+\makeatother
+
+\makeatletter
+% הוספת רווח קטן בין הערה להערה בתוך הפסקה הרציפה כדי שלא יידבקו
+\long\def\@makefntextA#1{#1~---~} 
+\long\def\@makefntextB#1{#1~---~}
+\makeatother
+
+\def\ornaterule{
+  \vspace{6mm}
+  \begin{center}
+    \rule{0.3\textwidth}{0.5pt} \raisebox{-2pt}{\scalebox{1.5}{~$\diamond$~}} \rule{0.3\textwidth}{0.5pt}
+  \end{center}
+  \vspace{3mm}
+}
+
+\def\footnoteruleA{%
+  \ornaterule
+  \noindent\centerline{\textbf{\Large \textsf{פירוש רש״י}}}%
+  \vspace{2mm}%
+}
+
+\def\footnoteruleB{%
+  \ornaterule
+  \noindent\centerline{\textbf{\Large \textsf{ברושים משניר}}}%
+  \vspace{2mm}%
+}
+
+% פס מפריד עדין וקצר למראי המקומות (כמו בספרים המסורתיים)
+\def\footnoteruleC{%
+  \vspace{4mm}%
+  \hrule width 0.3\textwidth%
+  \vspace{2mm}%
+}
+
+\newcommand{\Rashi}[1]{\footnoteA{\rashifont\normalsize #1}}
+\newcommand{\Peirush}[1]{\footnoteB{\normalsize #1}}
+\newcommand{\Makor}[1]{\footnoteC{\normalsize #1}}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+    \vspace*{1cm}
+    \fbox{%
+        \begin{minipage}{0.85\textwidth}
+            \begin{center}
+                \vspace{1.5cm}
+                {\fontsize{35}{45}\selectfont \textbf{חמישה חומשי תורה}} \\[1cm]
+                {\huge מקראות גדולות ומאירות} \\[1.5cm]
+                {\Large עם פירוש רש״י וביאורי גמרות} \\[0.5cm]
+                {\Large תחת השם המיוחד} \\[1.5cm]
+                {\fontsize{45}{55}\selectfont \textbf{ברושים משניר}} \\[2cm]
+                {\Large נערך ונוצר באהבת התורה ע״י} \\[0.5cm]
+                {\huge \textbf{שניר}} \\[1.5cm]
+            \end{center}
+        \end{minipage}
+    }
+\end{center}
+\end{titlepage}
+
+% התורה תהיה עכשיו גוש טקסט רציף, מסודר עם אותיות הפסוקים ובגודל יפה ומיושר
+\Large
+\noindent
+\input{content.tex}
+
+\end{document}

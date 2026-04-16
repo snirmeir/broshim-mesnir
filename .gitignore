@@ -1,0 +1,29 @@
+# LaTeX temporary files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.gz
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.pdf
+*.txt
+*.py
+*.tex
+!main.tex
+!generator.py
+!fetch_sefaria.py
+!perush.txt
+!torah.txt
+!rashi.txt
+# (אנחנו מחליטים מה לא להעלות. בדרך כלל לא מעלים קבצי טקסט ענקיים אם אפשר לייצר אותם שוב, 
+# אבל כאן אני אכלול אותם כדי שהפרויקט יהיה שלם)
+
+# Keep these:
+!*.tex
+!*.py
+!*.txt
