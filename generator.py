@@ -121,20 +121,20 @@ with open('content.tex', 'w', encoding='utf-8') as f:
             f.write(f'% ---------- פרק {chap} | פסוק {verse} ----------\n')
             
             cleaned_text = escape_latex(text.strip())
-            f.write(f' \\textbf{{{gem_verse}}} {cleaned_text} %\n')
+            f.write(f' \\textbf{{{gem_verse}}} {cleaned_text} ')
             
             if cv in rashi_dict and rashi_dict[cv].strip():
                 r_text = format_rashi(rashi_dict[cv].strip())
-                f.write(f'\\Rashi{{{r_text}}}%\n')
+                f.write(f'\\Rashi{{{r_text}}}') 
 
             if cv in perush_dict:
                 for comment, source in perush_dict[cv]:
                     esc_comment = escape_latex(comment)
                     esc_source = escape_latex(source)
                     if esc_source:
-                        f.write(f'\\Peirush{{{esc_comment}\\Makor{{{esc_source}}}}}%\n')
+                        f.write(f'\\Peirush{{{esc_comment}\\Makor{{{esc_source}}}}}')
                     else:
-                        f.write(f'\\Peirush{{{esc_comment}}}%\n')
-            f.write(' ') 
+                        f.write(f'\\Peirush{{{esc_comment}}}')
+            f.write('%\n') 
         except Exception as e:
             continue

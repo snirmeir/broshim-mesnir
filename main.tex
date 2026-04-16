@@ -32,20 +32,25 @@
 \usepackage{bigfoot}
 \DeclareNewFootnote[para]{A} 
 \DeclareNewFootnote[para]{B}
-\DeclareNewFootnote[para]{C}[arabic] % זרם חדש למראי מקומות והפניות
+\DeclareNewFootnote[para]{C}
+
+% הגדרת פונט וגודל לכל זרם בצורה גלובלית כדי שלא ייווצרו שבירות פסקה פנימיות
+\let\oldfootnoteA\footnoteA
+\renewcommand{\footnoteA}[1]{\oldfootnoteA{\rashifont #1}}
 
 \renewcommand{\thefootnoteA}{}
 \renewcommand{\thefootnoteB}{}
-% הזרם ה-3 יהיה באותיות עבריות (א, ב, ג...)
 \renewcommand{\thefootnoteC}{\alph{footnoteC}} 
+
+% הגדרת המפריד בין הערות בתוך המלבן - כאן קבענו קו מפריד עדין
 \makeatletter
-% במערכת עברית alph הופך אוטומטית לאותיות אבג
+\def\parafootsepA{\unskip~---~}
+\def\parafootsepB{\unskip~---~}
 \makeatother
 
 \makeatletter
-% הוספת רווח קטן בין הערה להערה בתוך הפסקה הרציפה כדי שלא יידבקו
-\long\def\@makefntextA#1{#1~---~} 
-\long\def\@makefntextB#1{#1~---~}
+\long\def\@makefntextA#1{#1} 
+\long\def\@makefntextB#1{#1}
 \makeatother
 
 \def\ornaterule{
@@ -75,9 +80,9 @@
   \vspace{2mm}%
 }
 
-\newcommand{\Rashi}[1]{\footnoteA{\rashifont\normalsize #1}}
-\newcommand{\Peirush}[1]{\footnoteB{\normalsize #1}}
-\newcommand{\Makor}[1]{\footnoteC{\normalsize #1}}
+\newcommand{\Rashi}[1]{\footnoteA{#1}}
+\newcommand{\Peirush}[1]{\footnoteB{#1}}
+\newcommand{\Makor}[1]{\footnoteC{#1}}
 
 \begin{document}
 
