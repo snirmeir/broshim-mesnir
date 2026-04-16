@@ -13,8 +13,9 @@
 \usepackage[paperwidth=16.5cm, paperheight=23.5cm, margin=1.8cm, top=2.5cm, bottom=2.2cm, headsep=0.5cm, headheight=14pt]{geometry}
 \usepackage{setspace}
 \setstretch{1.3} 
-\usepackage{microtype} % משפר את יישור הטקסט
-\usepackage{fancyhdr} % כותרות רצות
+\usepackage{microtype} 
+\usepackage{fancyhdr} 
+\usepackage{ragged2e} % לניהול יישור טקסט מתקדם
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -38,15 +39,18 @@
 \renewcommand{\thefootnoteB}{}
 \renewcommand{\thefootnoteC}{\alph{footnoteC}} 
 
-% הגדרת המפריד בין הערות בתוך המלבן - כאן קבענו קו מפריד עדין
 \makeatletter
+% ביטול מוחלט של כל רווח או אנטר בין הערות בזרמי para
 \def\parafootsepA{\unskip~---~}
 \def\parafootsepB{\unskip~---~}
+\def\footnotefontA{\rashifont\normalsize\justifying} % יישור דו-צדדי בתוך המלבן
+\def\footnotefontB{\normalsize\justifying} 
 \makeatother
 
 \makeatletter
-\long\def\@makefntextA#1{#1} 
-\long\def\@makefntextB#1{#1}
+% הלחמה של ההערות: ביטול כל עיצוב שוליים שעלול לשבור שורה
+\long\def\@makefntextA#1{\leavevmode#1} 
+\long\def\@makefntextB#1{\leavevmode#1}
 \makeatother
 
 \def\ornaterule{
