@@ -34,10 +34,6 @@
 \DeclareNewFootnote[para]{B}
 \DeclareNewFootnote[para]{C}
 
-% הגדרת פונט וגודל לכל זרם בצורה גלובלית כדי שלא ייווצרו שבירות פסקה פנימיות
-\let\oldfootnoteA\footnoteA
-\renewcommand{\footnoteA}[1]{\oldfootnoteA{\rashifont #1}}
-
 \renewcommand{\thefootnoteA}{}
 \renewcommand{\thefootnoteB}{}
 \renewcommand{\thefootnoteC}{\alph{footnoteC}} 
@@ -80,7 +76,7 @@
   \vspace{2mm}%
 }
 
-\newcommand{\Rashi}[1]{\footnoteA{#1}}
+\newcommand{\Rashi}[1]{\footnoteA{\rashifont #1}}
 \newcommand{\Peirush}[1]{\footnoteB{#1}}
 \newcommand{\Makor}[1]{\footnoteC{#1}}
 
