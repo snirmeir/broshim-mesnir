@@ -63,12 +63,10 @@ def int_to_gematria(num):
     return result
 
 def strip_niqqud(text):
-    # Removes Hebrew vowels and cantillation marks
     return re.sub(r'[\u0591-\u05C7]', '', text)
 
 def escape_latex(text):
     if not text: return ''
-    # נקה אנטרים סמויים בתוך הטקסט שיכולים לשבור פסקאות ב-LaTeX
     text = text.replace('\r', '').replace('\n', ' ')
     special_chars = {
         '&': r'\&', '%': r'\%', '$': r'\$', '#': r'\#', '_': r'\_',
@@ -82,11 +80,31 @@ def escape_latex(text):
 def format_rashi(text):
     if not text: return ''
     text = strip_niqqud(text)
-    text = text.replace('\r', '').replace('\n', ' ') # נקה אנטרים סמויים
-    parts = text.split('.', 1)
-    if len(parts) == 2:
-        return f'\\textbf{{{escape_latex(parts[0].strip())}.}}{escape_latex(parts[1].strip())}'
-    return escape_latex(text)
+    text = text.replace('\r', '').replace('\n', ' ')
+    
+    # regex שמזהה דיבור המתחיל: כל מה שבתחילת קטע או אחרי נקודה ורווח, ומסתיים בנקודה
+    # אנחנו נחליף את זה בטקסט מודגש
+    
+    # שלב א: נקה רווחים כפולים
+    text = re.sub(r'\s+', ' ', text).strip()
+    
+    # שלב ב: פצל לפי נקודות (דיבורי המתחיל של רש"י מסתיימים בנקודה)
+    entries = text.split('.')
+    formatted_parts = []
+    
+    for i, entry in enumerate(entries):
+        if not entry.strip(): continue
+        # אם זה החלק הראשון או שיש לו אופי של דיבור המתחיל (קצר יחסית ומסתיים בנקודה במקור)
+        # ברש"י הקלאסי הדיבור המתחיל הוא המשפט הראשון עד הנקודה
+        if ':' in entry: # לפעמים יש סימן : במקום נקודה בסוף דיבור המתחיל
+            dh, body = entry.split(':', 1)
+            formatted_parts.append(f'\\textbf{{{escape_latex(dh.strip())}:}}{escape_latex(body)}')
+        elif i == 0 or len(entry.strip().split()) < 6: # הנחה שדיבור המתחיל קצר מ-6 מילים
+             formatted_parts.append(f'\\textbf{{{escape_latex(entry.strip())}.}}')
+        else:
+            formatted_parts.append(escape_latex(entry))
+            
+    return ' '.join(formatted_parts)
 
 current_book = ''
 current_parasha = ''
@@ -101,7 +119,6 @@ with open('content.tex', 'w', encoding='utf-8') as f:
             chap, verse = chap_verse.split(':')
             verse_num = int(verse)
             
-            # Check for Book change
             if book != current_book:
                 if current_book != '':
                     f.write('\n\n\\newpage\n')
@@ -112,28 +129,22 @@ with open('content.tex', 'w', encoding='utf-8') as f:
                 current_book = book
                 current_parasha = ''
 
-            # Check for Parasha change
             if book in parashat_boundaries and chap_verse in parashat_boundaries[book]:
                 new_parasha = parashat_boundaries[book][chap_verse]
                 if new_parasha != current_parasha:
-                    if current_parasha != '':
-                        f.write('\n\n') # סיום פסקה קודמת כדי להקל על הזיכרון של המחשב
                     f.write(f'\\addparasha{{{book_names[book]} | {new_parasha}}}\n')
                     current_parasha = new_parasha
 
             gem_verse = int_to_gematria(verse_num)
             f.write(f'% ---------- פרק {chap} | פסוק {verse} ----------\n')
             
-            # Write Torah text
             cleaned_text = escape_latex(text.strip())
             f.write(f' \\textbf{{{gem_verse}}} {cleaned_text}')
             
-            # Write Rashi - glued to Torah
             if cv in rashi_dict and rashi_dict[cv].strip():
                 r_text = format_rashi(rashi_dict[cv].strip())
                 f.write(f'\\Rashi{{{r_text}}}')
 
-            # Write Personal Commentary - glued to Rashi
             if cv in perush_dict:
                 for comment, source in perush_dict[cv]:
                     esc_comment = escape_latex(comment)
@@ -143,7 +154,6 @@ with open('content.tex', 'w', encoding='utf-8') as f:
                     else:
                         f.write(f'\\Peirush{{{esc_comment}}}')
             
-            # Close verse line tightly
-            f.write('%\n')
+            f.write('%\n') 
         except Exception as e:
             continue
