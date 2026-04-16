@@ -142,8 +142,6 @@ with open('content.tex', 'w', encoding='utf-8') as f:
                         f.write(f'\\Peirush{{{esc_comment}}}')
             
             # Close verse line tightly
-            f.write('%\n') 
-            if verse_num % 5 == 0:
-                f.write('\n')
+            f.write('%\n')
         except Exception as e:
             continue
