@@ -116,6 +116,8 @@ with open('content.tex', 'w', encoding='utf-8') as f:
             if book in parashat_boundaries and chap_verse in parashat_boundaries[book]:
                 new_parasha = parashat_boundaries[book][chap_verse]
                 if new_parasha != current_parasha:
+                    if current_parasha != '':
+                        f.write('\n\n') # סיום פסקה קודמת כדי להקל על הזיכרון של המחשב
                     f.write(f'\\addparasha{{{book_names[book]} | {new_parasha}}}\n')
                     current_parasha = new_parasha
 
