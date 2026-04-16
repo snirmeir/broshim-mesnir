@@ -68,12 +68,13 @@ def strip_niqqud(text):
 
 def escape_latex(text):
     if not text: return ''
+    # נקה אנטרים סמויים בתוך הטקסט שיכולים לשבור פסקאות ב-LaTeX
+    text = text.replace('\r', '').replace('\n', ' ')
     special_chars = {
         '&': r'\&', '%': r'\%', '$': r'\$', '#': r'\#', '_': r'\_',
         '{': r'\{', '}': r'\}', '~': r'\textasciitilde{}', '^': r'\textasciicircum{}',
         '\\': r'\textbackslash{}',
     }
-    # Visible cleaning
     for u in ['\u202a', '\u202b', '\u202c', '\u202d', '\u202e', '\u200f', '\u200e']:
         text = text.replace(u, '')
     return ''.join(special_chars.get(c, c) for c in text)
@@ -81,6 +82,7 @@ def escape_latex(text):
 def format_rashi(text):
     if not text: return ''
     text = strip_niqqud(text)
+    text = text.replace('\r', '').replace('\n', ' ') # נקה אנטרים סמויים
     parts = text.split('.', 1)
     if len(parts) == 2:
         return f'\\textbf{{{escape_latex(parts[0].strip())}.}}{escape_latex(parts[1].strip())}'
@@ -120,13 +122,16 @@ with open('content.tex', 'w', encoding='utf-8') as f:
             gem_verse = int_to_gematria(verse_num)
             f.write(f'% ---------- פרק {chap} | פסוק {verse} ----------\n')
             
+            # Write Torah text
             cleaned_text = escape_latex(text.strip())
-            f.write(f' \\textbf{{{gem_verse}}} {cleaned_text} ')
+            f.write(f' \\textbf{{{gem_verse}}} {cleaned_text}')
             
+            # Write Rashi - glued to Torah
             if cv in rashi_dict and rashi_dict[cv].strip():
                 r_text = format_rashi(rashi_dict[cv].strip())
-                f.write(f'\\Rashi{{{r_text}}}') 
+                f.write(f'\\Rashi{{{r_text}}}')
 
+            # Write Personal Commentary - glued to Rashi
             if cv in perush_dict:
                 for comment, source in perush_dict[cv]:
                     esc_comment = escape_latex(comment)
@@ -135,6 +140,8 @@ with open('content.tex', 'w', encoding='utf-8') as f:
                         f.write(f'\\Peirush{{{esc_comment}\\Makor{{{esc_source}}}}}')
                     else:
                         f.write(f'\\Peirush{{{esc_comment}}}')
+            
+            # Close verse line tightly
             f.write('%\n') 
         except Exception as e:
             continue
